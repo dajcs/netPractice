@@ -1,0 +1,23 @@
+** generated for login "anemet" **
+******* Goal ID 1 ********
+forward way : B -> A (192.168.148.221)
+on B : packet accepted
+on B: send to B1
+on A : packet accepted
+on A: destination IP reached
+reverse way : A -> B (192.168.148.222)
+on A : packet accepted
+on A: send to A1
+on B : packet accepted
+on B: destination IP reached
+******* Goal ID 2 ********
+forward way : D -> C (10.10.10.1)
+on D : packet accepted
+on D: send to D1
+on C : packet accepted
+on C: destination IP reached
+reverse way : C -> D (10.10.10.2)
+on C : packet accepted
+on C: send to C1
+on D : packet accepted
+on D: destination IP reached

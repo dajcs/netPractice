@@ -1,0 +1,52 @@
+** generated for login "anemet" **
+******* Goal ID 1 ********
+forward way : A -> B (105.93.112.133)
+on A : packet accepted
+on A: send to A1
+on switch S: pass to all connections
+on R : packet not for me
+on A : loop detected
+on B : packet accepted
+on B: destination IP reached
+reverse way : B -> A (105.93.112.132)
+on B : packet accepted
+on B: send to B1
+on switch S: pass to all connections
+on R : packet not for me
+on A : packet accepted
+on A: destination IP reached
+on B : loop detected
+******* Goal ID 2 ********
+forward way : A -> R (105.93.112.2)
+on A : packet accepted
+on A: send to A1
+on switch S: pass to all connections
+on R : packet accepted
+on R: destination IP reached
+on A : loop detected
+on B : packet not for me
+reverse way : R -> A (105.93.112.132)
+on R : packet accepted
+on R: send to R1
+on switch S: pass to all connections
+on R : loop detected
+on A : packet accepted
+on A: destination IP reached
+on B : packet not for me
+******* Goal ID 3 ********
+forward way : B -> R (105.93.112.2)
+on B : packet accepted
+on B: send to B1
+on switch S: pass to all connections
+on R : packet accepted
+on R: destination IP reached
+on A : packet not for me
+on B : loop detected
+reverse way : R -> B (105.93.112.133)
+on R : packet accepted
+on R: send to R1
+on switch S: pass to all connections
+on R : loop detected
+on A : packet not for me
+on B : packet accepted
+on B: destination IP reached
