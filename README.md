@@ -18,6 +18,154 @@ NetPractice project @ school 42
 
 *   A router is responsible for distributing IP packets to other networks and hosts. If an incoming packet belongs to a subnetwork to which the router has a direct connection, the packet will be routed there. Otherwise, the packet will be forwarded toward the next-hop IP address specified in the router's routing table.
 
+*   **Note**: Unfortunately `ipcalc` is not available at 42 school computers and only the `bc` basic calculator can be used at evaluation/exam. This has very limited functionality, but we can convert from decimal to binary and from binary to decimal:
+
+```bash
+neat@dellw:/mnt/c/Users/dajcs/code/netPractice$ echo "obase=2; 192;168;148;222" | bc
+11000000
+10101000
+10010100
+11011110
+neat@dellw:/mnt/c/Users/dajcs/code/netPractice$ echo "ibase=2; 11000000;10101000;10010100;11011110" | bc
+192
+168
+148
+222
+```
+---
+
+## Level 1
+
+Just select Ip address with 1 greater or smaller than the other end of the Ip link:
+
+
+
+<p align="center">
+<img src="./img/level1.png" alt="Level 1" style="width:60%;">
+</p>
+
+---
+
+## Level 2
+
+For `Computer A` and `Computer B` we set the same subnetwork 255.255.255.224 (or /27) and we check HostMin and HostMax for this subnetwork.
+
+```yaml
+neat@dellw:/mnt/c/Users/dajcs/code/netPractice$ ipcalc 192.168.148.222 255.255.255.224
+Address:   192.168.148.222      11000000.10101000.10010100.110 11110
+Netmask:   255.255.255.224 = 27 11111111.11111111.11111111.111 00000
+Wildcard:  0.0.0.31             00000000.00000000.00000000.000 11111
+=>
+Network:   192.168.148.192/27   11000000.10101000.10010100.110 00000
+HostMin:   192.168.148.193      11000000.10101000.10010100.110 00001
+HostMax:   192.168.148.222      11000000.10101000.10010100.110 11110
+Broadcast: 192.168.148.223      11000000.10101000.10010100.110 11111
+Hosts/Net: 30                    Class C, Private Internet
+```
+
+Since HostMax ends in 222, we should set 221 in interface `A1`.
+
+On `Computer C` and `Computer D` connection the 127.x.y.z should be changed, because that is a loopback Ip address.
+We have the mask fixed to 255.255.255.252 (or /30) and that means the the last two bits of the Ip addresses needs to end in 01 and 10.
+
+```yaml
+neat@dellw:/mnt/c/Users/dajcs/code/netPractice$ ipcalc 10.0.0.1 /30
+Address:   10.0.0.1             00001010.00000000.00000000.000000 01
+Netmask:   255.255.255.252 = 30 11111111.11111111.11111111.111111 00
+Wildcard:  0.0.0.3              00000000.00000000.00000000.000000 11
+=>
+Network:   10.0.0.0/30          00001010.00000000.00000000.000000 00
+HostMin:   10.0.0.1             00001010.00000000.00000000.000000 01
+HostMax:   10.0.0.2             00001010.00000000.00000000.000000 10
+Broadcast: 10.0.0.3             00001010.00000000.00000000.000000 11
+Hosts/Net: 2                     Class A, Private Internet
+```
+
+
+<p align="center">
+<img src="./img/level2.png" alt="Level 2" style="width:60%;">
+</p>
+
+---
+
+## Level 3
+
+The switch is connecting all three hosts, so we need to set them in the same subnetwork. We set the mask to 255.255.255.128 (/25) and we check for HostMin and HostMax:
+
+```yaml
+neat@dellw:/mnt/c/Users/dajcs/code/netPractice$ ipcalc 104.198.219.125 255.255.255.128
+Address:   104.198.219.125      01101000.11000110.11011011.0 1111101
+Netmask:   255.255.255.128 = 25 11111111.11111111.11111111.1 0000000
+Wildcard:  0.0.0.127            00000000.00000000.00000000.0 1111111
+=>
+Network:   104.198.219.0/25     01101000.11000110.11011011.0 0000000
+HostMin:   104.198.219.1        01101000.11000110.11011011.0 0000001
+HostMax:   104.198.219.126      01101000.11000110.11011011.0 1111110
+```
+
+Since HostMax ends in 126, we can give this to one of the interfaces, .125 already taken and for the remaining interface we can give address ending in .124
+
+
+
+<p align="center">
+<img src="./img/level3.png" alt="Level 3" style="width:60%;">
+</p>
+
+---
+
+## Level 4
+
+We have the `router My_Gate` with `R2` and `R3` interfaces fixed to 105.93.112.1/25 and 105.93.112.244/26.
+
+```yaml
+neat@dellw:/mnt/c/Users/dajcs/code/netPractice$ ipcalc 105.93.112.1 255.255.255.128
+Address:   105.93.112.1         01101001.01011101.01110000.0 0000001
+Netmask:   255.255.255.128 = 25 11111111.11111111.11111111.1 0000000
+Wildcard:  0.0.0.127            00000000.00000000.00000000.0 1111111
+=>
+Network:   105.93.112.0/25      01101001.01011101.01110000.0 0000000
+HostMin:   105.93.112.1         01101001.01011101.01110000.0 0000001
+HostMax:   105.93.112.126       01101001.01011101.01110000.0 1111110
+Broadcast: 105.93.112.127       01101001.01011101.01110000.0 1111111
+Hosts/Net: 126                   Class A
+
+neat@dellw:/mnt/c/Users/dajcs/code/netPractice$ ipcalc 105.93.112.244 255.255.255.192
+Address:   105.93.112.244       01101001.01011101.01110000.11 110100
+Netmask:   255.255.255.192 = 26 11111111.11111111.11111111.11 000000
+Wildcard:  0.0.0.63             00000000.00000000.00000000.00 111111
+=>
+Network:   105.93.112.192/26    01101001.01011101.01110000.11 000000
+HostMin:   105.93.112.193       01101001.01011101.01110000.11 000001
+HostMax:   105.93.112.254       01101001.01011101.01110000.11 111110
+Broadcast: 105.93.112.255       01101001.01011101.01110000.11 111111
+Hosts/Net: 62                    Class A
+```
+
+We have to avoid overlapping subnetworks on the router interfaces, and `host A` if `A1` Ip is set to 105.93.112.132, so we can choose here a /26 subnetwork (we could make it even smaller /27, /28 or /29), and set if `B1` to .133 and `R1` to .134
+
+```yaml
+neat@dellw:/mnt/c/Users/dajcs/code/netPractice$ ipcalc 105.93.112.132 /26
+Address:   105.93.112.132       01101001.01011101.01110000.10 000100
+Netmask:   255.255.255.192 = 26 11111111.11111111.11111111.11 000000
+Wildcard:  0.0.0.63             00000000.00000000.00000000.00 111111
+=>
+Network:   105.93.112.128/26    01101001.01011101.01110000.10 000000
+HostMin:   105.93.112.129       01101001.01011101.01110000.10 000001
+HostMax:   105.93.112.190       01101001.01011101.01110000.10 111110
+Broadcast: 105.93.112.191       01101001.01011101.01110000.10 111111
+Hosts/Net: 62                    Class A
+```
+
+
+
+<p align="center">
+<img src="./img/level4.png" alt="Level 4" style="width:60%;">
+</p>
+
+---
+
+---
+
 ## Level 5
 
 - **Step1**: make the subnet masks equal on the two ends of the ip link:
@@ -83,7 +231,7 @@ NetPractice project @ school 42
   **Note**: When a packet is coming from the internet towards `host A` in `router R`, that is not analyzed by the routing table, because the router's `R1` interface is on the 86.197.134.128/25 subnet, so the router knows that the packet should be forwarded there without consulting the routing table.
 
 <p align="center">
-<img src="./img/level6.png" alt="Level 5" style="width:60%;">
+<img src="./img/level6.png" alt="Level 6" style="width:60%;">
 </p>
 ---
 
@@ -114,7 +262,7 @@ We are putting these interfaces in different subnets, so we can't use a /24 subn
 
 
 <p align="center">
-<img src="./img/level7.png" alt="Level 5" style="width:60%;">
+<img src="./img/level7.png" alt="Level 7" style="width:60%;">
 </p>
 
 ---
@@ -149,7 +297,7 @@ We are putting these interfaces in different subnets, so we can't use a /24 subn
     - Route: default => 142.129.223.17
 
 <p align="center">
-<img src="./img/level8.png" alt="Level 5" style="width:60%;">
+<img src="./img/level8.png" alt="Level 8" style="width:60%;">
 </p>
 
 ---
@@ -234,7 +382,7 @@ On the Internet we need to set the reverse routes towards `host A` and `host C`t
 
 
 <p align="center">
-<img src="./img/level9.png" alt="Level 5" style="width:60%;">
+<img src="./img/level9.png" alt="Level 9" style="width:60%;">
 </p>
 
 ---
@@ -282,7 +430,7 @@ On `router R1` if `R13` mask should be equal with if `R21` mask, and we should a
 
 
 <p align="center">
-<img src="./img/level10.png" alt="Level 5" style="width:60%;">
+<img src="./img/level10.png" alt="Level 10" style="width:60%;">
 </p>
 
 ---
